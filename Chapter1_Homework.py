@@ -4,6 +4,7 @@ from functools import reduce
 
 def normalize(L):
     # TODO:_____________________
+    L=L.capitalize()
     return L
 
 L1 = ['adam', 'LISA', 'barT']
@@ -19,9 +20,11 @@ def mult(a,s):
     return a*s
 def sum(L):
     # TODO:_____________________
+    return reduce(add, L)
 
 def prod(L):
     # TODO:_____________________
+    return reduce(mult, L)
 
 L = [1, 2, 3, 4]
 print(sum(L))
