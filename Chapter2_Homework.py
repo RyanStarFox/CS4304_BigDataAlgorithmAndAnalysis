@@ -27,7 +27,7 @@ class EuclideanLSH:
         """
         # TODO: 计算H(V) = |V·R + b| / a，R是一个随机向量，a是桶宽，b是一个在[0,a]之间均匀分布的随机变量，用hash_val表示H(V)
         #___________________________#
-
+        hash_val = np.floor((np.dot(inputs, self.R) + self.b) / self.a).astype(int)
         return hash_val
 
     def insert(self, inputs):
@@ -38,6 +38,7 @@ class EuclideanLSH:
         if len(inputs.shape) == 1:
             # TODO: 将inputs转化为二维向量
             #___________________________#
+            inputs = inputs.reshape(1,-1)
 
         hash_index = self._hash(inputs)
         for inputs_one, indexs in zip(inputs, hash_index):
@@ -59,9 +60,15 @@ class EuclideanLSH:
 
         # TODO: 将相同索引位置的向量添加到候选集中
         #___________________________#
+        for i, key in enumerate(hash_val):
+            candidates.update(self.hash_tables[i].get(key,[]))
 
         # TODO: 根据向量距离进行排序
         #___________________________#
+        candidates = sorted(
+            candidates,
+            key=lambda x: self.euclidean_dis(inputs, x)
+        )
         return candidates[:nums]
 
     @staticmethod
