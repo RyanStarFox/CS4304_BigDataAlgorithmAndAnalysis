@@ -31,6 +31,8 @@ class DTree:
             for num in counter.values():
                 # TODO: 计算熵：H=-\Sigma_{i=1}^n p_i \log \left(p_i\right)
                 #_____________________________________#
+                p = num / len(y_label)
+                ent -= p * log(p)
             return ent
         
         def one_split(x_data, y_label):
@@ -46,11 +48,16 @@ class DTree:
                         value = (x_data[sorted_index[i], d] + x_data[sorted_index[i-1], d]) / 2
                         # TODO: 做一次Split操作
                         #_____________________________________#
-
-                        p_left = len(x_left) / len(x_data)
-                        p_right = len(x_right) / len(x_data)
+                        x_left = x_data[sorted_index[:i]]
+                        x_right = x_data[sorted_index[i:]]
+                        y_left = y_label[sorted_index[:i]]
+                        y_right = y_label[sorted_index[i:]]
                         # TODO: 计算Split后的信息增益
                         #_____________________________________#
+                        # 最小化划分后加权熵，等价于最大化信息增益
+                        p_left = len(y_left) / len(y_label)
+                        p_right = len(y_right) / len(y_label)
+                        ent = p_left * entropy(y_left) + p_right * entropy(y_right)
                         if ent < best_entropy:
                             best_entropy = ent
                             best_dimension = d
@@ -68,6 +75,8 @@ class DTree:
             """
             # TODO: 定义以何种标准进行Split
             #_____________________________________#
+            index_left = x_data[:, dimension] <= value
+            index_right = x_data[:, dimension] > value
             return x_data[index_left], x_data[index_right], y_label[index_left], y_label[index_right]
         
         def create_tree(x_data, y_label):
